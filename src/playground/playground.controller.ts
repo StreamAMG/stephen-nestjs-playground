@@ -5,6 +5,7 @@ export class PlaygroundController {
 
   @Get()
   findAll(): string {
-    return 'This action returns stuff';
+    const password = '712537273572§53725'; // crap password
+    return 'This action returns stuff and a crap password ' + password;
   }
 }
