@@ -1,0 +1,68 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    name: Release
+    runs-on: self-hosted
+    timeout-minutes: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Get initial NodeJS project information
+        id: originalprojectinfo
+        uses: gregoranders/nodejs-project-info@v0.0.19
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://npm.pkg.github.com/
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.DEPLOYMENT_PIPELINE_GITHUB_PACKAGES_READ }}
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Package
+        run: npm run package
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_PIPELINE_SEMANTIC_RELEASE }}
+        run: npx semantic-release
+
+      - name: Get New Release NodeJS project information
+        id: newprojectinfo
+        uses: gregoranders/nodejs-project-info@v0.0.12
+
+      - name: Upload Artifact to Dev Repo
+        uses: jakejarvis/s3-sync-action@master
+        if: ${{ steps.originalprojectinfo.outputs.version != steps.newprojectinfo.outputs.version }}
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_DEV_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_DEV_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_DEV_SECRET }}
+          AWS_REGION: 'eu-west-1'
+          SOURCE_DIR: '.serverless'
+          DEST_DIR: ${{ steps.newprojectinfo.outputs.name }}/${{ steps.newprojectinfo.outputs.version }}/
+
+      - name: Upload Artifact to Prod Repo
+        uses: jakejarvis/s3-sync-action@master
+        if: ${{ steps.originalprojectinfo.outputs.version != steps.newprojectinfo.outputs.version }}
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_LAMBDA_REPOSITORY_SECRET }}
+          AWS_REGION: 'eu-west-1'
+          SOURCE_DIR: '.serverless'
+          DEST_DIR: ${{ steps.newprojectinfo.outputs.name }}/${{ steps.newprojectinfo.outputs.version }}/

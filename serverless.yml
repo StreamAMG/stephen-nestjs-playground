@@ -1,0 +1,45 @@
+service: nestjs-lambda-template
+
+# Starting with next major, Serverless will throw on configuration errors by default. Adapt to this behavior now by adding "configValidationMode: error" to service configuration
+# More Info: https://www.serverless.com/framework/docs/deprecations/#CONFIG_VALIDATION_MODE_DEFAULT
+configValidationMode: error
+
+provider:
+  name: aws
+  stage: prod
+  runtime: nodejs14.x
+  # Resolution of lambda version hashes was improved with better algorithm, which will be used in next major release.
+  # Switch to it now by setting "provider.lambdaHashingVersion" to "20201221"
+  # More Info: https://www.serverless.com/framework/docs/deprecations/#LAMBDA_HASHING_VERSION_V2
+  lambdaHashingVersion: 20201221
+
+package:
+  individually: true
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-jetpack
+  - serverless-plugin-optimize
+  - serverless-offline
+
+functions:
+  handler:
+    handler: src/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+      - http:
+          method: OPTIONS
+          path: /{proxy+}
+# TODO figure out how to handle HTTP API payload
+#      - httpApi: '*'
+#      - httpApi:
+#          method: '*'
+#          path: '/{proxy+}'
+
+custom:
+  optimize:
+    prefix: 'dist'
+    serverless-offline:
+      resourceRoutes: true

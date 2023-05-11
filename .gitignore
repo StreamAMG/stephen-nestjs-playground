@@ -1,0 +1,19 @@
+# IntelliJ Files
+.idea
+.iml
+modules.xml
+vcs.xml
+.serverless
+.webpack
+
+node_modules
+.DS_Store
+
+/.vs
+.vscode
+
+dist
+
+coverage
+
+.build

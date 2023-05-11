@@ -1,0 +1,10 @@
+.serverless
+.webpack
+.idea
+.husky
+.github
+.git
+.build
+coverage
+node_modules
+dist
