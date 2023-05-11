@@ -3,6 +3,7 @@ import { ExceptionsModule, AllExceptionsFilter } from '@streamamg/cloudpay-api-c
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { SiteConfigMiddleware, SiteConfigModule } from '@streamamg/cloudpay-api-common-site-context';
+import { PlaygroundController } from './playground/playground.controller';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { SiteConfigMiddleware, SiteConfigModule } from '@streamamg/cloudpay-api-
             useClass: AllExceptionsFilter,
         },
     ],
+    controllers: [PlaygroundController],
 })
 export class AppModule implements NestModule {
     // eslint-disable-next-line
