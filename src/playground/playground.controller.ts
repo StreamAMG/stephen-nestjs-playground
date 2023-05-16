@@ -8,4 +8,10 @@ export class PlaygroundController {
     const password = '712537273572§53725'; // crap password
     return 'This action returns stuff and a crap password ' + password;
   }
+
+  @Get()
+  sameFindAll(): string {
+    const password = '712537273572§53725'; // crap password
+    return 'This action returns stuff and a crap password ' + password;
+  }
 }
