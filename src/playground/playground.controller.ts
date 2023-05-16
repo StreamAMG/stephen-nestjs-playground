@@ -11,7 +11,7 @@ export class PlaygroundController {
 
   @Get()
   sameFindAll(): string {
-    const password = '712537273572§53725'; // crap password
-    return 'This action returns stuff and a crap password ' + password;
+    const newPassword = '712537273572§53725'; // crap password
+    return 'This action returns stuff and a crap password ' + newPassword;
   }
 }
