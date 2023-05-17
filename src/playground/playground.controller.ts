@@ -5,7 +5,7 @@ export class PlaygroundController {
 
   @Get()
   findAll(): string {
-    const password = '712537273572§53725'; // crap password
-    return 'This action returns stuff and a crap password ' + password;
+    const password = '1656153651635653652'; // Should flag analysis warning !
+    return 'This action returns stuff' + password ;
   }
 }
